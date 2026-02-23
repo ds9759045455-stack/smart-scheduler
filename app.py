@@ -19,6 +19,7 @@ def get_db_connection():
 def init_db():
     if not os.path.exists(DATABASE):
         conn = get_db_connection()
+        schema_path = os.path.join(os.path.dirname(__file__),"schema.sql")
         with open("schema.sql") as f:
             conn.executescript(f.read())
         conn.commit()
