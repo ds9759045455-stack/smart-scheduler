@@ -1,0 +1,75 @@
+body {
+margin:0;
+font-family:Arial;
+background:linear-gradient(135deg,#667eea,#764ba2);
+color:#333;
+}
+
+.center {
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+}
+
+.card {
+background:white;
+padding:30px;
+border-radius:10px;
+width:320px;
+box-shadow:0 10px 25px rgba(0,0,0,0.2);
+}
+
+input, button {
+width:100%;
+padding:10px;
+margin:8px 0;
+}
+
+button {
+background:#667eea;
+color:white;
+border:none;
+cursor:pointer;
+}
+
+.navbar {
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:15px 30px;
+background:white;
+}
+
+.container {
+padding:30px;
+}
+
+.task-list {
+list-style:none;
+padding:0;
+}
+
+.task-list li {
+background:white;
+padding:15px;
+margin:10px 0;
+display:flex;
+justify-content:space-between;
+border-radius:8px;
+}
+
+.Completed {
+opacity:0.6;
+text-decoration:line-through;
+}
+
+.delete-btn {
+color:red;
+}
+
+.flash {
+background:#ffdddd;
+padding:10px;
+margin:10px 0;
+}
