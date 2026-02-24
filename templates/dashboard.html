@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Ultimate Scheduler - Dashboard</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="navbar">
+<h2>Ultimate Smart Scheduler</h2>
+<a href="/logout">Logout</a>
+</div>
+
+<div class="container">
+<h3>Add Task</h3>
+<form method="POST" action="/add_task" class="task-form">
+<input type="text" name="title" placeholder="Task title" required>
+<input type="number" name="priority" placeholder="Priority (1-5)" required>
+<input type="date" name="due_date" required>
+<button type="submit">Add</button>
+</form>
+
+<h3>Your Tasks</h3>
+<ul class="task-list">
+{% for task in tasks %}
+<li class="{{ task.status }}">
+<div>
+<strong>{{ task.title }}</strong><br>
+Priority: {{ task.priority }} | Due: {{ task.due_date }}<br>
+Status: {{ task.status }}
+</div>
+<div>
+<a href="/toggle_status/{{ task.id }}">Toggle</a> |
+<a href="/delete_task/{{ task.id }}" class="delete-btn">Delete</a>
+</div>
+</li>
+{% else %}
+<li>No tasks yet</li>
+{% endfor %}
+</ul>
+</div>
+</body>
+</html>
