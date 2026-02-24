@@ -1,42 +1,401 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Ultimate Scheduler - Dashboard</title>
-<link rel="stylesheet" href="/static/style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3D Glass Dashboard</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+body {
+    font-family: 'Poppins', sans-serif;
+    background: radial-gradient(circle at left, #00f5ff, transparent 40%),
+                radial-gradient(circle at right, #ff00f5, transparent 40%),
+                #000;
+    height: 100vh;
+    overflow: hidden;
+    color: white;
+}
+
+/* ---------- LOGIN DESIGN ---------- */
+
+.login-glass {
+    width: 380px;
+    padding: 40px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(25px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 40px rgba(0,0,0,0.6);
+    text-align: center;
+}
+
+.login-title {
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 30px;
+}
+
+.input-group {
+    position: relative;
+    margin-bottom: 25px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px 40px 12px 10px;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid rgba(255,255,255,0.4);
+    outline: none;
+    color: white;
+}
+
+.input-group span {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    opacity: 0.7;
+}
+
+.login-options {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    margin-bottom: 20px;
+}
+
+.login-btn {
+    width: 100%;
+    padding: 12px;
+    border-radius: 25px;
+    border: none;
+    background: white;
+    color: black;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.login-btn:hover {
+    background: #ddd;
+}
+
+/* ---------- DASHBOARD DESIGN ---------- */
+
+.glass {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+}
+
+.tab-btn { transition: 0.3s; }
+.tab-btn:hover { background: rgba(255, 255, 255, 0.1); }
+.tab-active { background: rgba(99, 102, 241, 0.3) !important; border-left: 4px solid #6366f1; }
+
+.section-animate { animation: fadeIn 0.5s ease-out; }
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+</style>
 </head>
-<body>
-<div class="navbar">
-<h2>Ultimate Smart Scheduler</h2>
-<a href="/logout">Logout</a>
+
+<body class="flex items-center justify-center">
+
+<!-- LOGIN SCREEN -->
+<div id="loginScreen" class="flex items-center justify-center w-full h-screen">
+    <div class="login-glass">
+        <h2 class="login-title">Login</h2>
+
+        <div class="input-group">
+            <input type="text" id="username" placeholder="Email">
+            <span>✉</span>
+        </div>
+
+        <div class="input-group">
+            <input type="password" id="password" placeholder="Password">
+            <span>🔒</span>
+        </div>
+
+        <div class="login-options">
+            <label><input type="checkbox"> Remember me</label>
+            <a href="#">Forgot?</a>
+        </div>
+
+        <button onclick="login()" class="login-btn">Login</button>
+    </div>
 </div>
 
-<div class="container">
-<h3>Add Task</h3>
-<form method="POST" action="/add_task" class="task-form">
-<input type="text" name="title" placeholder="Task title" required>
-<input type="number" name="priority" placeholder="Priority (1-5)" required>
-<input type="date" name="due_date" required>
-<button type="submit">Add</button>
-</form>
+<!-- DASHBOARD -->
+<div id="dashboard" class="hidden w-full max-w-6xl h-[85vh] flex gap-6">
 
-<h3>Your Tasks</h3>
-<ul class="task-list">
-{% for task in tasks %}
-<li class="{{ task.status }}">
-<div>
-<strong>{{ task.title }}</strong><br>
-Priority: {{ task.priority }} | Due: {{ task.due_date }}<br>
-Status: {{ task.status }}
+<aside class="w-1/4 flex flex-col gap-4">
+<div class="glass p-6 text-center">
+<h4 class="font-bold">human's pioneers</h4>
+<p class="text-xs text-indigo-300">Pro Developer</p>
 </div>
-<div>
-<a href="/toggle_status/{{ task.id }}">Toggle</a> |
-<a href="/delete_task/{{ task.id }}" class="delete-btn">Delete</a>
+
+<nav class="glass flex-1 p-4 flex flex-col gap-2">
+<button onclick="changeTab('tasks')" id="btn-tasks" class="tab-btn tab-active text-left p-4 rounded-xl">📋 Tasks</button>
+<button onclick="changeTab('calendar')" id="btn-calendar" class="tab-btn text-left p-4 rounded-xl">📅 Calendar</button>
+<button onclick="changeTab('skill')" id="btn-skill" class="tab-btn text-left p-4 rounded-xl">🚀 Skills</button>
+<button onclick="changeTab('health')" id="btn-health" class="tab-btn text-left p-4 rounded-xl">❤️ Health</button>
+<button onclick="changeTab('group')" id="btn-group" class="tab-btn text-left p-4 rounded-xl">💬 Group</button>
+
+<div class="mt-auto pt-4">
+<button onclick="logout()" class="w-full p-3 rounded-xl bg-red-500/20 text-red-400 text-sm">Logout</button>
 </div>
-</li>
-{% else %}
-<li>No tasks yet</li>
-{% endfor %}
-</ul>
+</nav>
+</aside>
+
+<main class="flex-1 glass p-10 overflow-y-auto" id="content-area">
+<div class="section-animate">
+<h2 class="text-4xl font-bold mb-8">Daily Tasks</h2>
+<p>Welcome to your dashboard 🚀</p>
 </div>
+</main>
+
+</div>
+
+<script>
+function login() {
+    const user = document.getElementById("username").value;
+    const pass = document.getElementById("password").value;
+
+    if(user !== "" && pass !== "") {
+        document.getElementById("loginScreen").style.display = "none";
+        document.getElementById("dashboard").classList.remove("hidden");
+        document.getElementById("dashboard").classList.add("flex");
+    } else {
+        alert("Enter login details");
+    }
+}
+
+function logout(){
+    document.getElementById("dashboard").classList.add("hidden");
+    document.getElementById("loginScreen").style.display = "flex";
+}
+
+function changeTab(tabName) {
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('tab-active'));
+    document.getElementById('btn-' + tabName).classList.add('tab-active');
+
+    const sections = {
+        tasks: "<h2 class='text-4xl font-bold mb-8'>Tasks</h2><p>Complete your work 🔥</p>",
+        calendar: "<h2 class='text-4xl font-bold mb-8'>Calendar</h2><p>Manage schedule 📅</p>",
+        skill: "<h2 class='text-4xl font-bold mb-8'>Skills</h2><p>Improve daily 🚀</p>",
+        health: "<h2 class='text-4xl font-bold mb-8'>Health</h2><p>Stay fit ❤️</p>",
+        group: "<h2 class='text-4xl font-bold mb-8'>Group Chat</h2><p>Discuss here 💬</p>"
+    };
+
+    document.getElementById("content-area").innerHTML =
+        "<div class='section-animate'>" + sections[tabName] + "</div>";
+}
+</script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3D Glass Dashboard</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+body {
+    font-family: 'Poppins', sans-serif;
+    background: radial-gradient(circle at left, #00f5ff, transparent 40%),
+                radial-gradient(circle at right, #ff00f5, transparent 40%),
+                #000;
+    height: 100vh;
+    overflow: hidden;
+    color: white;
+}
+
+/* ---------- LOGIN DESIGN ---------- */
+
+.login-glass {
+    width: 380px;
+    padding: 40px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(25px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 40px rgba(0,0,0,0.6);
+    text-align: center;
+}
+
+.login-title {
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 30px;
+}
+
+.input-group {
+    position: relative;
+    margin-bottom: 25px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px 40px 12px 10px;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid rgba(255,255,255,0.4);
+    outline: none;
+    color: white;
+}
+
+.input-group span {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    opacity: 0.7;
+}
+
+.login-options {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    margin-bottom: 20px;
+}
+
+.login-btn {
+    width: 100%;
+    padding: 12px;
+    border-radius: 25px;
+    border: none;
+    background: white;
+    color: black;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.login-btn:hover {
+    background: #ddd;
+}
+
+/* ---------- DASHBOARD DESIGN ---------- */
+
+.glass {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+}
+
+.tab-btn { transition: 0.3s; }
+.tab-btn:hover { background: rgba(255, 255, 255, 0.1); }
+.tab-active { background: rgba(99, 102, 241, 0.3) !important; border-left: 4px solid #6366f1; }
+
+.section-animate { animation: fadeIn 0.5s ease-out; }
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+</style>
+</head>
+
+<body class="flex items-center justify-center">
+
+<!-- LOGIN SCREEN -->
+<div id="loginScreen" class="flex items-center justify-center w-full h-screen">
+    <div class="login-glass">
+        <h2 class="login-title">Login</h2>
+
+        <div class="input-group">
+            <input type="text" id="username" placeholder="Email">
+            <span>✉</span>
+        </div>
+
+        <div class="input-group">
+            <input type="password" id="password" placeholder="Password">
+            <span>🔒</span>
+        </div>
+
+        <div class="login-options">
+            <label><input type="checkbox"> Remember me</label>
+            <a href="#">Forgot?</a>
+        </div>
+
+        <button onclick="login()" class="login-btn">Login</button>
+    </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard" class="hidden w-full max-w-6xl h-[85vh] flex gap-6">
+
+<aside class="w-1/4 flex flex-col gap-4">
+<div class="glass p-6 text-center">
+<h4 class="font-bold">Akash Sharma</h4>
+<p class="text-xs text-indigo-300">Pro Developer</p>
+</div>
+
+<nav class="glass flex-1 p-4 flex flex-col gap-2">
+<button onclick="changeTab('tasks')" id="btn-tasks" class="tab-btn tab-active text-left p-4 rounded-xl">📋 Tasks</button>
+<button onclick="changeTab('calendar')" id="btn-calendar" class="tab-btn text-left p-4 rounded-xl">📅 Calendar</button>
+<button onclick="changeTab('skill')" id="btn-skill" class="tab-btn text-left p-4 rounded-xl">🚀 Skills</button>
+<button onclick="changeTab('health')" id="btn-health" class="tab-btn text-left p-4 rounded-xl">❤️ Health</button>
+<button onclick="changeTab('group')" id="btn-group" class="tab-btn text-left p-4 rounded-xl">💬 Group</button>
+
+<div class="mt-auto pt-4">
+<button onclick="logout()" class="w-full p-3 rounded-xl bg-red-500/20 text-red-400 text-sm">Logout</button>
+</div>
+</nav>
+</aside>
+
+<main class="flex-1 glass p-10 overflow-y-auto" id="content-area">
+<div class="section-animate">
+<h2 class="text-4xl font-bold mb-8">Daily Tasks</h2>
+<p>Welcome to your dashboard 🚀</p>
+</div>
+</main>
+
+</div>
+
+<script>
+function login() {
+    const user = document.getElementById("username").value;
+    const pass = document.getElementById("password").value;
+
+    if(user !== "" && pass !== "") {
+        document.getElementById("loginScreen").style.display = "none";
+        document.getElementById("dashboard").classList.remove("hidden");
+        document.getElementById("dashboard").classList.add("flex");
+    } else {
+        alert("Enter login details");
+    }
+}
+
+function logout(){
+    document.getElementById("dashboard").classList.add("hidden");
+    document.getElementById("loginScreen").style.display = "flex";
+}
+
+function changeTab(tabName) {
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('tab-active'));
+    document.getElementById('btn-' + tabName).classList.add('tab-active');
+
+    const sections = {
+        tasks: "<h2 class='text-4xl font-bold mb-8'>Tasks</h2><p>Complete your work 🔥</p>",
+        calendar: "<h2 class='text-4xl font-bold mb-8'>Calendar</h2><p>Manage schedule 📅</p>",
+        skill: "<h2 class='text-4xl font-bold mb-8'>Skills</h2><p>Improve daily 🚀</p>",
+        health: "<h2 class='text-4xl font-bold mb-8'>Health</h2><p>Stay fit ❤️</p>",
+        group: "<h2 class='text-4xl font-bold mb-8'>Group Chat</h2><p>Discuss here 💬</p>"
+    };
+
+    document.getElementById("content-area").innerHTML =
+        "<div class='section-animate'>" + sections[tabName] + "</div>";
+}
+</script>
+
+</body>
+</html>
 </body>
 </html>
