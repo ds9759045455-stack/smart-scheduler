@@ -81,9 +81,10 @@ def dashboard():
 
     conn = get_db_connection()
     tasks = conn.execute("SELECT * FROM tasks WHERE user_id=?", (session["user_id"],)).fetchall()
+    events = conn.execute("SELECT * FROM events WHERE user_id=?", (session["user_id"],)).fetchall()
     conn.close()
 
-    return render_template("dashboard.html", tasks=tasks)
+    return render_template("dashboard.html", tasks=tasks, events=events)
 
 @app.route("/add_task", methods=["POST"])
 def add_task():
