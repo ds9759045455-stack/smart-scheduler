@@ -1,19 +1,73 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Login</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Scheduler Dashboard</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+body {
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    color: white;
+}
+
+/* Glass effect */
+.glass {
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(15px);
+    border-radius: 15px;
+    padding: 20px;
+}
+</style>
 </head>
-<body>
 
-<h2>Login</h2>
+<body class="p-6">
 
-<form method="POST">
-    <input type="text" name="email" placeholder="Email" required><br><br>
-    <input type="password" name="password" placeholder="Password" required><br><br>
-    <button type="submit">Login</button>
-</form>
+<h1 class="text-3xl font-bold mb-6">Smart Scheduler 🚀</h1>
 
-<a href="/register">Register</a>
+<div class="grid grid-cols-3 gap-6">
+
+    <!-- TASKS -->
+    <div class="glass col-span-2">
+        <h2 class="text-xl mb-4">Tasks</h2>
+
+        {% for task in tasks %}
+            <div class="mb-2 p-3 bg-white/10 rounded">
+                <b>{{ task.title }}</b><br>
+                Priority: {{ task.priority }} | Due: {{ task.due_date }}
+            </div>
+        {% else %}
+            <p>No tasks available</p>
+        {% endfor %}
+    </div>
+
+    <!-- ACTIONS -->
+    <div class="glass">
+        <h2 class="text-xl mb-4">Actions</h2>
+
+        <a href="/add_task" class="block mb-2 bg-blue-500 p-2 rounded">Add Task</a>
+        <a href="/auto_schedule" class="block mb-2 bg-green-500 p-2 rounded">Auto Schedule</a>
+        <a href="/export_google" class="block mb-2 bg-purple-500 p-2 rounded">Export Google</a>
+        <a href="/logout" class="block bg-red-500 p-2 rounded">Logout</a>
+    </div>
+
+</div>
+
+<!-- EVENTS -->
+<div class="glass mt-6">
+    <h2 class="text-xl mb-4">Events</h2>
+
+    {% for event in events %}
+        <div class="mb-2 p-3 bg-white/10 rounded">
+            <b>{{ event.title }}</b><br>
+            Time: {{ event.event_time }}
+        </div>
+    {% else %}
+        <p>No events available</p>
+    {% endfor %}
+</div>
 
 </body>
 </html>
