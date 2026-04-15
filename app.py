@@ -28,8 +28,6 @@ def init_db():
 init_db()
 
 # ---------------- AUTH ----------------
-
-@app.route("/", methods=["GET", "POST"])
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -37,14 +35,17 @@ def login():
         password = request.form["password"]
 
         conn = get_db_connection()
-        user = conn.execute("SELECT * FROM users WHERE email=?", (email,)).fetchone()
+        user = conn.execute(
+            "SELECT * FROM users WHERE email=?",
+            (email,)
+        ).fetchone()
         conn.close()
 
         if user and check_password_hash(user["password"], password):
             session["user_id"] = user["id"]
             return redirect(url_for("dashboard"))
         else:
-            flash("Invalid credentials")
+            flash("Invalid Credentials!", "danger")
 
     return render_template("login.html")
 
@@ -80,8 +81,17 @@ def dashboard():
         return redirect(url_for("login"))
 
     conn = get_db_connection()
-    tasks = conn.execute("SELECT * FROM tasks WHERE user_id=?", (session["user_id"],)).fetchall()
-    events = conn.execute("SELECT * FROM events WHERE user_id=?", (session["user_id"],)).fetchall()
+
+    tasks = conn.execute(
+        "SELECT * FROM tasks WHERE user_id=?",
+        (session["user_id"],)
+    ).fetchall()
+
+    events = conn.execute(
+        "SELECT * FROM events WHERE user_id=?",
+        (session["user_id"],)
+    ).fetchall()
+
     conn.close()
 
     return render_template("dashboard.html", tasks=tasks, events=events)
